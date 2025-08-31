@@ -216,10 +216,26 @@
       const orderReference = solanaWeb3.Keypair.generate().publicKey;
       const paymentUrl = SolanaPay.encodeURL({ recipient: MERCHANT_WALLET, amount: totalAmount, reference: orderReference, label, message, memo, splToken: USDC_MINT });
       
-      const qr = SolanaPay.createQR(paymentUrl, 256, '#000'); // size, color
+      // Render QR with dynamic loader fallback
       const qrContainer = document.getElementById('qrCodeContainer');
       qrContainer.innerHTML = '';
-      qrContainer.appendChild(qr);
+      const renderQR = async (el, url) => {
+        if (typeof SolanaPay !== 'undefined' && SolanaPay.createQR) {
+          try {
+            const q = SolanaPay.createQR(url, 256, '#000');
+            el.appendChild(q);
+            return;
+          } catch (e) { /* try fallback */ }
+        }
+        // Fallback: ensure qrcodejs
+        if (typeof QRCode === 'undefined') {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.async = true; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+          }).catch(()=>{});
+        }
+        try { new QRCode(el, { text: url, width: 256, height: 256 }); } catch(e){ el.innerHTML = `<input readonly value="${url}" style="width:100%;padding:8px;font-family:monospace;"/>`; }
+      };
+      await renderQR(qrContainer, paymentUrl);
       
       document.getElementById('paymentAmount').textContent = totalAmount.toString() + ' USDC';
       document.getElementById('paymentModal').style.display = 'flex';

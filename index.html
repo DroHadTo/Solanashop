@@ -120,14 +120,31 @@
 
         console.log('Payment URL:', paymentUrl);
 
-        // Generate QR code using qrcodejs which was loaded with defer; if not available show URL
-        if (typeof QRCode !== 'undefined') {
-          // QRCodejs expects a DOM node and options
-          new QRCode(qrEl, { text: paymentUrl, width: 256, height: 256 });
+        // Ensure QR generator is available; if not, load it dynamically and then render
+        async function ensureQRCode() {
+          if (typeof QRCode !== 'undefined') return;
+          return new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+            s.async = true;
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error('Failed to load QR library'));
+            document.head.appendChild(s);
+          });
+        }
+
+        try {
+          await ensureQRCode();
+          // clear container then create QR
+          qrEl.innerHTML = '';
+          // size adapts to CSS; provide a sensible default
+          const size = Math.min(256, Math.floor((qrEl.clientWidth || 256)));
+          new QRCode(qrEl, { text: paymentUrl, width: size, height: size });
           statusEl.textContent = 'QR code generated — scan with your Solana wallet.';
-        } else {
+        } catch (err) {
+          console.warn('QR render failed, showing URL fallback', err);
           qrEl.innerHTML = `<div style="padding:12px;font-size:14px;background:#fff;color:#000;border-radius:8px;"><label style="font-weight:600;display:block;margin-bottom:8px">Payment URL</label><input readonly value="${paymentUrl}" style="width:100%;padding:8px;font-family:monospace;"/></div>`;
-          statusEl.textContent = 'QR generator not available — copy the payment URL.';
+          statusEl.textContent = 'QR generator unavailable — copy the payment URL.';
         }
 
   // Set up deep link
