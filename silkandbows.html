@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Silk & Bows</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pathway+Extreme:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet">
+    <!-- Web3.js (global `solanaWeb3`) per Solana docs -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <!-- BigNumber.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js"></script>
+    <!-- Solana Pay -->
+    <script src="https://unpkg.com/@solana/pay@0.2.6/dist/index.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="nav-logo" href="#">
+                <span class="logo-icon">
+                    <img src="assets/images/Bow.png" alt="Bow" class="logo-mark" loading="lazy">
+                </span>
+                <span class="logo-text">Silk & Bows</span>
+            </a>
+            <div class="nav-search">
+                <div class="search-container">
+                    <input id="searchInput" class="search-input" placeholder="Search for luxury items..." aria-label="Search products">
+                    <button id="searchBtn" class="search-btn" aria-label="Run search">Search</button>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content container hero-centered">
+                <div class="hero-text">
+                    <h1 class="hero-title"><span class="silk-text">SILK</span> <span class="ampersand">&</span> <span class="bows-text">BOWS</span></h1>
+                    
+                </div>
+                <div class="hero-bow hero-center-logo">
+                    <img src="assets/images/bowmafiadao.png" alt="BowMafiadao" class="center-logo" loading="lazy">
+                </div>
+            </div>
+            
+    </section>
+
+        <section id="shop" class="product-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Shop</h2>
+                    <a href="#" class="see-all-link">See all</a>
+                </div>
+
+                <div class="product-grid grid-4" id="productGrid">
+                    <!-- 46 Products - images coming later -->
+                    <article class="product-card" data-name="Bow Mafia (kindness) Stylish Phone Case">
+                        <div class="product-image">
+                            <img src="assets/images/Kindnesscase.png" alt="Bow Mafia (kindness) Stylish Phone Case" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Kindnesscase1.png" alt="Kindness Case Angle" loading="lazy" />
+                            <img src="assets/images/Kindnesscase2.png" alt="Kindness Case Lifestyle" loading="lazy" />
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Bow Mafia (kindness) Stylish Phone Case</div>
+                            <div class="product-price">0.20 USDC</div>
+                        </div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia Stylish Phone Case">
+                        <div class="product-image">
+                            <img src="assets/images/BowMafiacase.png" alt="Bow Mafia Stylish Phone Case" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/BowMafiacase1.png" alt="Bow Mafia Case Angle" loading="lazy" />
+                            <img src="assets/images/BowMafiacase2.png" alt="Bow Mafia Case Exploded" loading="lazy" />
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Bow Mafia Stylish Phone Case</div>
+                            <div class="product-price">0.20 USDC</div>
+                        </div>
+                    </article>
+                    <article class="product-card" data-name="Be Iconic Stylish Phone Case">
+                        <div class="product-image">
+                            <img src="assets/images/Beiconiccase.png" alt="Be Iconic Stylish Phone Case" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Beiconiccase1.png" alt="Be Iconic Case Angle" loading="lazy" />
+                            <img src="assets/images/Beiconiccase2.png" alt="Be Iconic Case Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Be Iconic Stylish Phone Case</div>
+                            <div class="product-price">0.20 USDC</div>
+                        </div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia – Hardcover Journal Matte">
+                        <div class="product-image">
+                            <img src="assets/images/Hard%20cover%20journal.png" alt="Bow Mafia – Hardcover Journal Matte" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Hard%20cover%20journal1.png" alt="Bow Mafia Journal Spread" loading="lazy" />
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Bow Mafia – Hardcover Journal Matte</div>
+                            <div class="product-price">0.20 USDC</div>
+                        </div>
+                    </article>
+                    <article class="product-card" data-name="Kindness Is Our Superpower – Hardcover Journal Matte">
+                        <div class="product-image">
+                            <img src="assets/images/kindnessHJ.png" alt="Kindness Is Our Superpower – Hardcover Journal Matte" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/kindnessHJ1.png" alt="Kindness Journal Spread" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness Is Our Superpower – Hardcover Journal Matte</div></div>
+                    </article>
+                    <article class="product-card" data-name="DOGE - Hardcover Journal Matte">
+                        <div class="product-image">
+                            <img src="assets/images/DOGEHJ.png" alt="DOGE - Hardcover Journal Matte" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/DogeHJ1.png" alt="DOGE Journal Spread" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">DOGE - Hardcover Journal Matte</div></div>
+                    </article>
+                    <article class="product-card" data-name="Be Iconic Greeting Cards">
+                        <div class="product-image">
+                            <img src="assets/images/biconiccard.png" alt="Be Iconic Greeting Cards" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/biconiccard1.png" alt="Be Iconic Card Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Be Iconic Greeting Cards</div></div>
+                    </article>
+                    <article class="product-card" data-name="Kindness Superpower Greeting Cards">
+                        <div class="product-image">
+                            <img src="assets/images/kindnesscard.png" alt="Kindness Superpower Greeting Cards" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/kindnesscard1.png" alt="Kindness Card Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness Superpower Greeting Cards</div></div>
+                    </article>
+                    <article class="product-card" data-name="Do Only GOOD Everyday Greeting Cards">
+                        <div class="product-image">
+                            <img src="assets/images/DOGECARD.png" alt="Do Only GOOD Everyday Greeting Cards" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/DOGECARD1.png" alt="Do Only GOOD Everyday Greeting Cards Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Do Only GOOD Everyday Greeting Cards</div></div>
+                    </article>
+                    <article class="product-card" data-name="Kindness – Unisex Heavy Cotton Tee">
+                        <div class="product-image">
+                            <img src="assets/images/unisexkindnessT.png" alt="Kindness – Unisex Heavy Cotton Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/unisexkindnessT1.png" alt="Kindness – Unisex Heavy Cotton Tee Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness – Unisex Heavy Cotton Tee</div></div>
+                    </article>
+                    <article class="product-card" data-name="Be Iconic – Unisex Midweight Tee">
+                        <div class="product-image">
+                            <img src="assets/images/unisexTBI.png" alt="Be Iconic – Unisex Midweight Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/unisexTBI1.png" alt="Be Iconic – Unisex Midweight Tee Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Be Iconic – Unisex Midweight Tee</div></div>
+                    </article>
+                    <article class="product-card" data-name="Be Iconic - Women's Boxy Tee">
+                        <div class="product-image">
+                            <img src="assets/images/womenboxTBI.png" alt="Be Iconic - Women's Boxy Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/womenboxTBI1.png" alt="Be Iconic - Women's Boxy Tee Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Be Iconic - Women's Boxy Tee</div></div>
+                    </article>
+                    <article class="product-card" data-name="DOGE - Unisex Heavy Cotton Tee">
+                        <div class="product-image">
+                            <img src="assets/images/DOGET.png" alt="DOGE - Unisex Heavy Cotton Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/DOGET1.png" alt="DOGE - Unisex Heavy Cotton Tee Angle" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">DOGE - Unisex Heavy Cotton Tee</div></div>
+                    </article>
+                    
+                    <article class="product-card" data-name="Bow Mafia x Adidas Unisex Fleece Hoodie">
+                        <div class="product-image">
+                            <img src="assets/images/BowMafiaH.png" alt="Bow Mafia x Adidas Unisex Fleece Hoodie" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/BowMafiaH2.png" alt="Bow Mafia x Adidas Unisex Fleece Hoodie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia x Adidas Unisex Fleece Hoodie</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia x Adidas (Kindness) Unisex Fleece Hoodie">
+                        <div class="product-image">
+                            <img src="assets/images/BowMafiaHKind.png" alt="Bow Mafia x Adidas (Kindness) Unisex Fleece Hoodie" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/BowMafiaHKind1.png" alt="Bow Mafia x Adidas (Kindness) Unisex Fleece Hoodie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia x Adidas (Kindness) Unisex Fleece Hoodie</div></div>
+                    </article>
+                    <article class="product-card" data-name="Do Good x Champion Sweatshirt">
+                        <div class="product-image">
+                            <img src="assets/images/pullpverDOGE.png" alt="Do Good x Champion Sweatshirt" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/pullpverDOGE1.png" alt="Do Good x Champion Sweatshirt Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Do Good x Champion Sweatshirt</div></div>
+                    </article>
+                    
+                    <article class="product-card" data-name="Yellow Bow Vintage Embroidered Cap">
+                        <div class="product-image">
+                            <img src="assets/images/HATBOW3.png" alt="Yellow Bow Vintage Embroidered Cap" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/HATBOW3a.png" alt="Yellow Bow Vintage Embroidered Cap Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Yellow Bow Vintage Embroidered Cap</div></div>
+                    </article>
+                    <article class="product-card" data-name="Pink Bow Vintage Embroidered Cap">
+                        <div class="product-image">
+                            <img src="assets/images/HATBOW4.png" alt="Pink Bow Vintage Embroidered Cap" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/HATBOW3a.png" alt="Pink Bow Vintage Embroidered Cap Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Pink Bow Vintage Embroidered Cap</div></div>
+                    </article>
+                    
+                    <article class="product-card" data-name="Classic Yellow bow Cuffed Beanie with Bold Embroidery">
+                        <div class="product-image">
+                            <img src="assets/images/HATDENIM3.png" alt="Classic Yellow bow Cuffed Beanie with Bold Embroidery" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/HATDENIM3a.png" alt="Classic Yellow bow Cuffed Beanie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Classic Yellow bow Cuffed Beanie with Bold Embroidery</div></div>
+                    </article>
+                    <article class="product-card" data-name="Classic Pink Bow Cuffed Beanie with Trendy Embroidery">
+                        <div class="product-image">
+                            <img src="assets/images/HATDENIM4.png" alt="Classic Pink Bow Cuffed Beanie" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/HATDENIM4a.png" alt="Classic Pink Bow Cuffed Beanie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Classic Pink Bow Cuffed Beanie with Trendy Embroidery</div></div>
+                    </article>
+                    <article class="product-card" data-name="Classic Yellow bow Cuffed Beanie with Bold Embroidery">
+                        <div class="product-image">
+                            <img src="assets/images/beanieYellowBow.png" alt="Classic Yellow bow Cuffed Beanie with Bold Embroidery" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/beanieYellowBow1.png" alt="Classic Yellow bow Cuffed Beanie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Classic Yellow bow Cuffed Beanie with Bold Embroidery</div></div>
+                    </article>
+                    <article class="product-card" data-name="Classic Pink Bow Cuffed Beanie with Trendy Embroidery">
+                        <div class="product-image">
+                            <img src="assets/images/beaniePinkBow.png" alt="Classic Pink Bow Cuffed Beanie with Trendy Embroidery" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/beaniePinkBow1.png" alt="Classic Pink Bow Cuffed Beanie Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Classic Pink Bow Cuffed Beanie with Trendy Embroidery</div></div>
+                    </article>
+                    <article class="product-card" data-name="Do Only GOOD Everyday for Coffee Lovers">
+                        <div class="product-image">
+                            <img src="assets/images/DOGEMUG.png" alt="Do Only GOOD Everyday for Coffee Lovers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/DOGEMUG1.png" alt="Do Only GOOD Everyday Mug Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Do Only GOOD Everyday for Coffee Lovers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Inspirational Kindness Latte Mug">
+                        <div class="product-image">
+                            <img src="assets/images/Kindnessmug.png" alt="Inspirational Kindness Latte Mug" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/kindnessmug1.png" alt="Inspirational Kindness Latte Mug Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Inspirational Kindness Latte Mug</div></div>
+                    </article>
+                    <article class="product-card" data-name="Stylish Bow Mafia Latte Mug">
+                        <div class="product-image">
+                            <img src="assets/images/Bowmafialatte.png" alt="Stylish Bow Mafia Latte Mug" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/bowmafialatte1.png" alt="Stylish Bow Mafia Latte Mug Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Stylish Bow Mafia Latte Mug</div></div>
+                    </article>
+                    <article class="product-card" data-name="Be Iconic Magic Mug">
+                        <div class="product-image">
+                            <img src="assets/images/Beiconicmug.png" alt="Be Iconic Magic Mug" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Beiconicmug1.png" alt="Be Iconic Magic Mug Angle" loading="lazy" />
+                            <img src="assets/images/Beiconicmug2.png" alt="Be Iconic Magic Mug Detail" loading="lazy" />
+                            <img src="assets/images/Beiconicmug3.png" alt="Be Iconic Magic Mug Lifestyle" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Be Iconic Magic Mug</div></div>
+                    </article>
+                    <article class="product-card" data-name="Kindness Is Our Superpower Water Bottle">
+                        <div class="product-image">
+                            <img src="assets/images/waterbottle.png" alt="Kindness Is Our Superpower Water Bottle" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/waterbottle1.png" alt="Kindness Water Bottle Angle" loading="lazy" />
+                            <img src="assets/images/waterbottle2.png" alt="Kindness Water Bottle Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness Is Our Superpower Water Bottle</div></div>
+                    </article>
+                    <article class="product-card" data-name="Kindness Is Our Superpower – 20oz Insulated Water Bottle">
+                        <div class="product-image">
+                            <img src="assets/images/waterbottle20z.png" alt="Kindness Is Our Superpower – 20oz Insulated Water Bottle" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/waterbottle20z1.png" alt="20oz Insulated Water Bottle Alternate" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness Is Our Superpower – 20oz Insulated Water Bottle</div></div>
+                    </article>
+                    <article class="product-card" data-name="Kindness Is Our Superpower Tritan Water Bottle">
+                        <div class="product-image">
+                            <img src="assets/images/WaterBottlekindnessbow.png" alt="Kindness Is Our Superpower Tritan Water Bottle" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/WaterBottlekindnessbow1.png" alt="Tritan Water Bottle Angle" loading="lazy" />
+                            <img src="assets/images/WaterBottlekindnessbow2.png" alt="Tritan Water Bottle Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Kindness Is Our Superpower Tritan Water Bottle</div></div>
+                    </article>
+                    <article class="product-card" data-name="Pink Bow-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/Pinkbowstickers.png" alt="Pink Bow-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Pinkbowstickers1.png" alt="Pink Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/Pinkbowstickers2.png" alt="Pink Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Pink Bow-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Green Bow-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/Greenbowstickers.png" alt="Green Bow-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Greenbowstickers1.png" alt="Green Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/Greenbowstickers2.png" alt="Green Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Green Bow-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Red Bow-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/Redbowstickers.png" alt="Red Bow-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Redbowstickers1.png" alt="Red Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/Redbowstickers2.png" alt="Red Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Red Bow-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Yellow Bow-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/yellowbowstickers.png" alt="Yellow Bow-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/yellowbowstickers1.png" alt="Yellow Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/yellowbowstickers2.png" alt="Yellow Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Yellow Bow-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Blue Bow-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/Bluebowstickers.png" alt="Blue Bow-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/Bluebowstickers1.png" alt="Blue Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/Bluebowstickers2.png" alt="Blue Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Blue Bow-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia – Inspired Kiss – Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/ybowstickers.png" alt="Bow Mafia – Inspired Kiss – Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/ybowstickers1.png" alt="Bow Mafia Yellow Bow Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/ybowstickers2.png" alt="Bow Mafia Yellow Bow Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia – Inspired Kiss – Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia-Inspired Kiss-Cut Stickers">
+                        <div class="product-image">
+                            <img src="assets/images/bowstickers.png" alt="Bow Mafia-Inspired Kiss-Cut Stickers" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/bowstickers1.png" alt="Bow Mafia Stickers Sheet" loading="lazy" />
+                            <img src="assets/images/bowstickers2.png" alt="Bow Mafia Stickers Detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia-Inspired Kiss-Cut Stickers</div></div>
+                    </article>
+                    <article class="product-card" data-name="Trendy Pet Hoodie with 'Do Good Only Everyday' Design">
+                        <div class="product-image">
+                            <img src="assets/images/pettrench.png" alt="Trendy Pet Hoodie with 'Do Good Only Everyday' Design" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/pettrench1.png" alt="Pet Hoodie alternate view" loading="lazy" />
+                            <img src="assets/images/pettrench2.png" alt="Pet Hoodie detail view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Trendy Pet Hoodie with 'Do Good Only Everyday' Design</div></div>
+                    </article>
+                    <!-- moved Do Only GOOD Everyday Colorful Infant Tee to bottom -->
+                    <article class="product-card" data-name="Pet Bowl with 'Kindness' Design">
+                        <div class="product-image">
+                            <img src="assets/images/petbowlkindness.png" alt="Pet Bowl with 'Kindness' Design" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/petbowlkindness1.png" alt="Kindness Pet Bowl side view" loading="lazy" />
+                            <img src="assets/images/petbowlkindness2.png" alt="Kindness Pet Bowl detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Pet Bowl with 'Kindness' Design</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia Food Mat">
+                        <div class="product-image">
+                            <img src="assets/images/bowmafiamat.png" alt="Bow Mafia Food Mat" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/bowmafiamat1.png" alt="Bow Mafia Food Mat alternate view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia Food Mat</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia Colorful Yellow Food Mat">
+                        <div class="product-image">
+                            <img src="assets/images/bowmafiamaty.png" alt="Bow Mafia Colorful Yellow Food Mat" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/bowmafiamaty1.png" alt="Bow Mafia Yellow Food Mat alternate view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia Colorful Yellow Food Mat</div></div>
+                    </article>
+                    <article class="product-card" data-name="Bow Mafia Colorful Pink Food Mat">
+                        <div class="product-image">
+                            <img src="assets/images/bowmafiamatp.png" alt="Bow Mafia Colorful Pink Food Mat" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/bowmafiamatp1.png" alt="Bow Mafia Pink Food Mat alternate view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Bow Mafia Colorful Pink Food Mat</div></div>
+                    </article>
+                    <article class="product-card" data-name="Pet Bowl with 'Bow Mafia' Design">
+                        <div class="product-image">
+                            <img src="assets/images/petbowlbowmafia.png" alt="Pet Bowl with 'Bow Mafia' Design" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/petbowlbowmafia1.png" alt="Bow Mafia Pet Bowl side view" loading="lazy" />
+                            <img src="assets/images/petbowlbowmafia2.png" alt="Bow Mafia Pet Bowl detail" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Pet Bowl with 'Bow Mafia' Design</div></div>
+                    </article>
+                    <article class="product-card" data-name="Do Good Everyday, Youth Inspirational Tee">
+                        <div class="product-image">
+                            <img src="assets/images/youthTdoge.png" alt="Do Good Everyday, Youth Inspirational Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/youthTdoge1.png" alt="Youth Tee alternate view" loading="lazy" />
+                            <img src="assets/images/youthTdoge2.png" alt="Youth Tee detail view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Do Good Everyday, Youth Inspirational Tee</div></div>
+                    </article>
+                    <article class="product-card" data-name="DOGE – Bright Toddler Tee">
+                        <div class="product-image">
+                            <img src="assets/images/brighttoddlerdoge.png" alt="DOGE – Bright Toddler Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/brighttoddlerdoge1.png" alt="Bright Toddler Tee alternate view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">DOGE – Bright Toddler Tee</div></div>
+                    </article>
+                    <article class="product-card" data-name="Do Only GOOD Everyday Colorful Infant Tee">
+                        <div class="product-image">
+                            <img src="assets/images/infantTdoge.png" alt="Do Only GOOD Everyday Colorful Infant Tee" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/infantTdoge1.png" alt="Infant Tee alternate view" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Do Only GOOD Everyday Colorful Infant Tee</div></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Travel Accessories Section -->
+        <section class="product-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Travel Accessories</h2>
+                </div>
+                <div class="product-grid grid-4" id="travelAccessoriesGrid" style="grid-template-columns: repeat(4, 1fr);">
+                    <article class="product-card" data-name="Stylish Bow Mafia Passport Wallet">
+                        <div class="product-image">
+                            <img src="assets/images/PassportcaseBowMafia.png" alt="Stylish Bow Mafia Passport Wallet" loading="lazy" />
+                            <div class="product-overlay"><button class="quick-view">Quick View</button></div>
+                        </div>
+                        <div class="product-thumbs">
+                            <img src="assets/images/PassportcaseBowMafia1.png" alt="Passport Wallet Angle" loading="lazy" />
+                            <img src="assets/images/PassportcaseBowMafia2.png" alt="Passport Wallet Interior" loading="lazy" />
+                        </div>
+                        <div class="product-info"><div class="product-name">Stylish Bow Mafia Passport Wallet</div></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart Section -->
+        <section class="cart-section">
+            <div class="container">
+                <div class="cart-panel">
+                    <h2 class="cart-title">Your Cart</h2>
+                    <div id="cart-items" class="cart-items"></div>
+                    <div class="cart-summary">
+                        <div class="cart-total-label">Total:</div>
+                        <div class="cart-total-value">$<span id="cart-total">0</span></div>
+                    </div>
+                </div>
+
+                <form id="checkout-form" class="checkout-form" action="https://formspree.io/f/your-form-id" method="POST">
+                    <h3 class="checkout-title">Shipping Info</h3>
+                    <div class="checkout-grid">
+                        <label> Name
+                            <input type="text" name="name" required>
+                        </label>
+                        <label> Email
+                            <input type="email" name="email" required>
+                        </label>
+                        <label> Address
+                            <input type="text" name="address" required>
+                        </label>
+                    </div>
+                    <input type="hidden" name="order" id="order-data">
+                    <button type="submit" class="checkout-btn">Place Order</button>
+                </form>
+            </div>
+        </section>
+        
+
+        <section class="newsletter">
+            <div class="container">
+                <div class="newsletter-content">
+                    <div>
+                        <h2 class="newsletter-title">Stay in Touch</h2>
+                        <p class="newsletter-description">Subscribe to receive updates on our latest silk collections and offers.</p>
+                    </div>
+                    <div>
+                        <form id="newsletter-form">
+                            <div class="email-container">
+                                <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+                                <button class="subscribe-btn" type="submit">Subscribe</button>
+                            </div>
+                            <p class="newsletter-privacy">We respect your privacy. Unsubscribe anytime.</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="qr-section">
+        <div class="container">
+            <h2>Pay with Solana</h2>
+            <div id="qr-code-container"></div>
+            <div style="margin-top:16px; padding:12px; border:1px solid #eee;">
+                <div><strong>USD → SOL (live):</strong></div>
+                <label>
+                    USD:
+                    <input id="usd" type="number" step="0.01" value="10.00" />
+                </label>
+                <div id="usdToSol" style="margin-top:8px;">≈ — SOL</div>
+                <small id="oracleMeta" style="color:#666;"></small>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo"><span class="logo-icon">SB</span><div class="logo-text">Silk & Bows</div></div>
+                <p class="footer-description">Handmade silk accessories that elevate your style.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Quick Links</h4>
+                <ul class="footer-links"><li><a href="#">Shop</a></li><li><a href="#">About</a></li></ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Follow</h4>
+                <div class="social-links"><a class="social-link" href="#">IG</a><a class="social-link" href="#">TW</a></div>
+            </div>
+            <div>
+                <h4 class="footer-title">Support</h4>
+                <ul class="footer-links"><li><a href="#">Contact</a></li><li><a href="#">FAQ</a></li></ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; Silk & Bows</div>
+            <div class="footer-bottom-links"><a href="#">Terms</a><a href="#">Privacy</a></div>
+        </div>
+    </footer>
+
+    <div class="image-modal" id="imageModal" aria-hidden="true" style="display:none">
+        <div class="modal-content">
+            <img src="" alt="" class="modal-image" id="modalImage">
+            <button class="modal-close" onclick="document.getElementById('imageModal').style.display='none'">×</button>
+        </div>
+    </div>
+
+    <div class="payment-modal" id="paymentModal" aria-hidden="true" style="display:none">
+        <div class="modal-content">
+            <h3 id="paymentTitle">Scan QR Code to Pay</h3>
+            <div id="qrCodeContainer"></div>
+            <p id="paymentText">Pay <span id="paymentAmount"></span> USDC to complete your order.</p>
+            <button class="modal-close" onclick="document.getElementById('paymentModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

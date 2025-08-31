@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Solana Pay — USDC Checkout</title>
+  <style>
+    :root { --w: 256px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; line-height: 1.4; }
+    .row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    #qr { width: var(--w); height: var(--w); display: grid; place-items: center; border: 1px dashed #ccc; }
+    #status { margin-top: .75rem; font-weight: 600; }
+    button { padding: .6rem 1rem; font-weight: 600; }
+    input[type="number"] { padding: .5rem; width: 10rem; }
+    a.btn { display: inline-block; padding: .5rem .9rem; border: 1px solid #888; text-decoration: none; margin-top: .5rem; }
+  </style>
+</head>
+<body>
+  <h1>Pay with Solana Pay (USDC)</h1>
+
+  <div class="row">
+    <label>Amount (USDC): <input id="amount" type="number" min="0" step="0.01" value="0.01"></label>
+    <button id="make">Create Payment</button>
+  </div>
+
+  <!-- USD to SOL Converter -->
+  <div style="margin-top:16px; padding:12px; border:1px solid #eee; border-radius: 8px; background: #f9f9f9;">
+    <div><strong>USD → SOL (live):</strong></div>
+    <label>
+      USD:
+      <input id="usd" type="number" step="0.01" value="10.00" style="margin-left: 8px; padding: 4px;" />
+    </label>
+    <div id="usdToSol" style="margin-top:8px; font-weight: bold; color: #2563eb;">Loading price...</div>
+    <small id="oracleMeta" style="color:#666; font-size: 12px;">Initializing converter...</small>
+  </div>
+
+  <div class="row" style="margin-top:1rem;">
+    <div id="qr">QR will appear here</div>
+    <div>
+      <a id="deeplink" class="btn" href="#" rel="noopener" target="_blank" style="display:none">Open in wallet</a>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <!-- Web3.js (global `solanaWeb3`) per Solana docs -->
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <!-- BigNumber.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js"></script>
+  <!-- Pyth Hermes Client -->
+  <script src="https://unpkg.com/@pythnetwork/hermes-client@latest/dist/index.umd.js"></script>
+
+  <script>
+    // ------- CONFIG -------
+    const CLUSTER = 'devnet'; // 'mainnet-beta' for production
+    const RPC = solanaWeb3.clusterApiUrl(CLUSTER);
+    const connection = new solanaWeb3.Connection(RPC, 'confirmed');
+
+    const MERCHANT_WALLET = new solanaWeb3.PublicKey('89znXatBP5yXeA3JowynCwXTYqGSB833A9p96kfLcGkZ');
+    const USDC_MINTS = {
+      'mainnet-beta': new solanaWeb3.PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'), // USDC mainnet
+      'devnet': new solanaWeb3.PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'),  // USDC test mint
+    };
+    const USDC_MINT = USDC_MINTS[CLUSTER];
+
+    // ------- UI -------
+    const amountEl = document.getElementById('amount');
+    const makeBtn  = document.getElementById('make');
+    const qrEl     = document.getElementById('qr');
+    const deepLink = document.getElementById('deeplink');
+    const statusEl = document.getElementById('status');
+
+    console.log('Libraries loaded:');
+    console.log('solanaWeb3:', typeof solanaWeb3);
+    console.log('BigNumber:', typeof BigNumber);
+    console.log('QRCode:', typeof QRCode);
+
+    let currentReference = null;
+    let pollAbort = null;
+
+    if (makeBtn) {
+      makeBtn.addEventListener('click', async () => {
+        console.log('Create Payment button clicked!');
+
+        statusEl.textContent = 'Generating payment...';
+
+        // cleanup
+        qrEl.innerHTML = '';
+        deepLink.style.display = 'none';
+
+        const amount = new BigNumber(amountEl.value || '0');
+        if (amount.isLessThanOrEqualTo(0)) {
+          alert('Enter a positive USDC amount.');
+          return;
+        }
+
+        // Unique reference for this order so we can find & validate its tx on-chain
+        currentReference = solanaWeb3.Keypair.generate().publicKey;
+
+        const label   = 'Your Store';
+        const message = `Order #${Math.floor(Math.random() * 1e6)}`;
+        const memo    = `order-${Date.now()}`;
+
+        // Manual Solana Pay URL construction (works without external library)
+        const paymentUrl = `solana:${MERCHANT_WALLET.toString()}?` +
+          `amount=${amount.toString()}&` +
+          `spl-token=${USDC_MINT.toString()}&` +
+          `reference=${currentReference.toString()}&` +
+          `label=${encodeURIComponent(label)}&` +
+          `message=${encodeURIComponent(message)}&` +
+          `memo=${encodeURIComponent(memo)}`;
+
+        console.log('Payment URL:', paymentUrl);
+
+        try {
+          // Generate QR code using QRCode library
+          new QRCode(qrEl, {
+            text: paymentUrl,
+            width: 256,
+            height: 256,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          console.log('QR code generated successfully');
+          statusEl.textContent = 'QR code generated! Scan with your Solana wallet.';
+
+        } catch (error) {
+          console.error('QR generation failed:', error);
+
+          // Fallback: show URL as text
+          qrEl.innerHTML = `
+            <div style="padding: 20px; text-align: center; border: 1px solid #ccc; border-radius: 8px;">
+              <p style="margin-bottom: 10px; font-weight: bold;">QR Code Generation Failed</p>
+              <p style="margin-bottom: 15px;">Copy this payment URL and paste it in your Solana wallet:</p>
+              <textarea readonly style="width: 100%; height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 12px;">${paymentUrl}</textarea>
+              <p style="margin-top: 15px;">
+                <a href="${paymentUrl}" target="_blank" style="color: #007bff; text-decoration: none;">Open in Wallet →</a>
+              </p>
+            </div>
+          `;
+          statusEl.textContent = 'Payment URL ready! Copy the URL above and use it in your wallet.';
+        }
+
+        // Set up deep link
+        deepLink.href = paymentUrl;
+        deepLink.style.display = 'inline-block';
+
+        // Start client-side polling to detect & validate the payment
+        startPolling();
+      });
+    }
+
+    async function startPolling() {
+      if (pollAbort) pollAbort.aborted = true;
+      pollAbort = new AbortController();
+
+      statusEl.textContent = 'Waiting for payment...';
+      const amount = new BigNumber(amountEl.value || '0');
+
+      // Use server-side verification instead of browser polling
+      try {
+        const response = await fetch(`http://localhost:8787/verify?reference=${currentReference.toString()}&amount=${amount.toString()}`);
+        const result = await response.json();
+
+        if (result.ok) {
+          statusEl.textContent = `✅ Payment verified! Transaction: ${result.signature}`;
+        } else {
+          statusEl.textContent = `❌ Payment verification failed: ${result.error}`;
+        }
+      } catch (error) {
+        console.error('Server verification failed:', error);
+        statusEl.textContent = '⚠️ Server verification unavailable, but payment URL is ready';
+      }
+    }
+
+    // ------- USD to SOL Converter using Pyth -------
+    let currentSolPrice = null;
+    let priceUpdateInterval = null;
+
+    // ===== Pyth (Hermes) config =====
+    const HERMES_URL = 'https://hermes.pyth.network';
+    // TODO: Get the correct SOL/USD feed ID from https://pyth.network/developers/price-feed-ids
+    // For now, using Jupiter as primary source until Pyth feed ID is corrected
+    const SOL_USD_FEED_ID = null; // Set to null to force Jupiter fallback
+
+    // Simple DOM handles
+    const usdInput = document.getElementById('usd');
+    const usdToSolEl = document.getElementById('usdToSol');
+    const oracleMetaEl = document.getElementById('oracleMeta');
+
+    // Polling cadence (ms)
+    const POLL_MS = 15000;
+
+    // In-memory cache of latest oracle price (SOL/USD)
+    let lastPrice = null;         // numeric, e.g. 182.34 USD per SOL
+    let lastConf  = null;         // oracle confidence interval (USD)
+    let lastTs    = null;         // iso timestamp
+
+    // --------------- Fetch from Pyth (Hermes) ---------------
+    // Use the global pythHermes from the UMD script
+    const hermes = new window.pythHermes.RestClient(HERMES_URL);
+
+    // Pyth returns price + exponent; normalize to float with confidence
+    async function fetchSolUsdFromPyth() {
+      if (!SOL_USD_FEED_ID) throw new Error('Missing SOL_USD_FEED_ID');
+
+      const resp = await hermes.getLatestPriceUpdates({
+        ids: [SOL_USD_FEED_ID],
+        // Choose a chain if you need a specific one; off-chain verified prices are fine for UI conversion
+        // parsed: true  // returned by default; client parses exponent for you
+      });
+
+      const p = resp.parsed[0]; // first (and only) feed
+      // p.price.price & p.price.expo; p.price.conf & expo — the client also exposes p.price.price as a decimal via parsed
+      // Normalize using bigint + exponent if needed; client parses it for you as number:
+      const price = Number(p.price.price);        // e.g., 182.34 (USD per SOL)
+      const conf  = Number(p.price.confidence);   // 95% conf interval (USD)
+      const ts    = new Date(p.price.publishTime * 1000).toISOString();
+
+      lastPrice = price;
+      lastConf  = conf;
+      lastTs    = ts;
+
+      console.log('Pyth price updated:', { price, conf, ts });
+    }
+
+    // --------------- Fallback (Jupiter quote in USDC→SOL) ---------------
+    // Now used as primary source until Pyth feed ID is corrected
+    async function fetchSolUsdFallback() {
+      const res = await fetch('https://price.jup.ag/v4/price?ids=SOL');
+      const j = await res.json();
+      const price = j.data?.SOL?.price; // USD per SOL
+      if (price) {
+        lastPrice = Number(price);
+        lastConf = null; // Jupiter doesn't provide confidence intervals
+        lastTs = new Date().toISOString();
+        console.log('Jupiter price updated:', price);
+      } else {
+        throw new Error('Jupiter price unavailable');
+      }
+    }
+
+    // --------------- Convert USD → SOL ---------------
+    function renderUsdToSol() {
+      const usd = Number(usdInput.value || '0');
+      if (!usd || !lastPrice) {
+        usdToSolEl.textContent = '≈ — SOL';
+        return;
+      }
+      // add a tiny buffer (e.g., 0.4%) to cover drift between price display and payment
+      const SLIPPAGE = 0.004;
+      const sol = (usd / lastPrice) * (1 - SLIPPAGE);
+
+      usdToSolEl.textContent = `≈ ${sol.toFixed(6)} SOL`;
+      const meta = lastConf
+        ? `Pyth @ ${lastTs} • conf ±$${lastConf.toFixed(4)} • slip ${Math.round(SLIPPAGE*1000)/10}%`
+        : `Jupiter @ ${lastTs} • slip ${Math.round(SLIPPAGE*1000)/10}%`;
+      oracleMetaEl.textContent = meta;
+    }
+
+    // --------------- Orchestrate ---------------
+    async function refreshPrice() {
+      try {
+        // Try Jupiter first (more reliable until Pyth feed ID is fixed)
+        console.log('Trying Jupiter API first...');
+        await fetchSolUsdFallback();
+      } catch (e) {
+        console.warn('Jupiter failed, trying Pyth...', e);
+        try {
+          if (SOL_USD_FEED_ID) {
+            await fetchSolUsdFromPyth();
+          } else {
+            throw new Error('No valid Pyth feed ID configured');
+          }
+        } catch (e2) {
+          console.error('Both APIs failed:', e2);
+          oracleMetaEl.textContent = '⚠️ Price feeds temporarily unavailable - using last known price';
+        }
+      } finally {
+        renderUsdToSol();
+      }
+    }
+
+    // Update USD to SOL conversion
+    function updateConversion() {
+      renderUsdToSol();
+    }
+
+    // Start price updates
+    function startPriceUpdates() {
+      // Initial fetch
+      refreshPrice();
+
+      // Update every 15 seconds
+      priceUpdateInterval = setInterval(refreshPrice, POLL_MS);
+    }
+
+    // Stop price updates
+    function stopPriceUpdates() {
+      if (priceUpdateInterval) {
+        clearInterval(priceUpdateInterval);
+        priceUpdateInterval = null;
+      }
+    }
+
+    // Initialize converter when page loads
+    if (usdInput && usdToSolEl) {
+      // Update conversion when USD input changes
+      usdInput.addEventListener('input', renderUsdToSol);
+
+      // Start fetching prices
+      startPriceUpdates();
+
+      console.log('USD to SOL converter initialized with Pyth + Jupiter fallback');
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', stopPriceUpdates);
+  </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\lenD25\Desktop\testsb\index.html
