@@ -6,13 +6,23 @@
   <title>Solana Pay — USDC Checkout</title>
   <style>
     :root { --w: 256px; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; line-height: 1.4; }
+    /* Mobile-first base */
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 1rem; line-height: 1.4; -webkit-font-smoothing:antialiased; }
     .row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-    #qr { width: var(--w); height: var(--w); display: grid; place-items: center; border: 1px dashed #ccc; }
+    #qr { width: min(var(--w), 60vw); aspect-ratio: 1 / 1; display: grid; place-items: center; border: 1px dashed #ccc; border-radius:8px; overflow:hidden; background:#fff; }
     #status { margin-top: .75rem; font-weight: 600; }
     button { padding: .6rem 1rem; font-weight: 600; }
     input[type="number"] { padding: .5rem; width: 10rem; }
     a.btn { display: inline-block; padding: .5rem .9rem; border: 1px solid #888; text-decoration: none; margin-top: .5rem; }
+    /* Larger screens */
+    @media (min-width: 720px) {
+      body { margin: 2rem; }
+      :root { --w: 256px; }
+    }
+    @media (max-width: 420px) {
+      input[type="number"] { width: 8rem; }
+      a.btn { padding: .4rem .6rem; font-size: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -37,20 +47,22 @@
   <div class="row" style="margin-top:1rem;">
     <div id="qr">QR will appear here</div>
     <div>
-      <a id="deeplink" class="btn" href="#" rel="noopener" target="_blank" style="display:none">Open in wallet</a>
-      <div id="status"></div>
+      <a id="deeplink" class="btn" href="#" rel="noopener noreferrer" target="_blank" style="display:none">Open in wallet</a>
+      <div id="status" aria-live="polite"></div>
     </div>
   </div>
 
   <!-- Web3.js (global `solanaWeb3`) per Solana docs -->
-  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js" defer></script>
   <!-- BigNumber.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js" defer></script>
+  <!-- QR generator (qrcodejs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
   <!-- Pyth Hermes Client -->
-  <script src="https://unpkg.com/@pythnetwork/hermes-client@latest/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/@pythnetwork/hermes-client@latest/dist/index.umd.js" defer></script>
 
   <script>
-    // ------- CONFIG -------
+  // ------- CONFIG -------
     const CLUSTER = 'devnet'; // 'mainnet-beta' for production
     const RPC = solanaWeb3.clusterApiUrl(CLUSTER);
     const connection = new solanaWeb3.Connection(RPC, 'confirmed');
@@ -69,15 +81,12 @@
     const deepLink = document.getElementById('deeplink');
     const statusEl = document.getElementById('status');
 
-    console.log('Libraries loaded:');
-    console.log('solanaWeb3:', typeof solanaWeb3);
-    console.log('BigNumber:', typeof BigNumber);
-    console.log('QRCode:', typeof QRCode);
+  // Lite runtime checks (libraries loaded via defer)
 
     let currentReference = null;
     let pollAbort = null;
 
-    if (makeBtn) {
+  if (makeBtn) {
       makeBtn.addEventListener('click', async () => {
         console.log('Create Payment button clicked!');
 
@@ -93,8 +102,8 @@
           return;
         }
 
-        // Unique reference for this order so we can find & validate its tx on-chain
-        currentReference = solanaWeb3.Keypair.generate().publicKey;
+  // Unique reference for this order so we can find & validate its tx on-chain
+  currentReference = solanaWeb3.Keypair.generate().publicKey;
 
         const label   = 'Your Store';
         const message = `Order #${Math.floor(Math.random() * 1e6)}`;
@@ -111,40 +120,19 @@
 
         console.log('Payment URL:', paymentUrl);
 
-        try {
-          // Generate QR code using QRCode library
-          new QRCode(qrEl, {
-            text: paymentUrl,
-            width: 256,
-            height: 256,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-          });
-
-          console.log('QR code generated successfully');
-          statusEl.textContent = 'QR code generated! Scan with your Solana wallet.';
-
-        } catch (error) {
-          console.error('QR generation failed:', error);
-
-          // Fallback: show URL as text
-          qrEl.innerHTML = `
-            <div style="padding: 20px; text-align: center; border: 1px solid #ccc; border-radius: 8px;">
-              <p style="margin-bottom: 10px; font-weight: bold;">QR Code Generation Failed</p>
-              <p style="margin-bottom: 15px;">Copy this payment URL and paste it in your Solana wallet:</p>
-              <textarea readonly style="width: 100%; height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 12px;">${paymentUrl}</textarea>
-              <p style="margin-top: 15px;">
-                <a href="${paymentUrl}" target="_blank" style="color: #007bff; text-decoration: none;">Open in Wallet →</a>
-              </p>
-            </div>
-          `;
-          statusEl.textContent = 'Payment URL ready! Copy the URL above and use it in your wallet.';
+        // Generate QR code using qrcodejs which was loaded with defer; if not available show URL
+        if (typeof QRCode !== 'undefined') {
+          // QRCodejs expects a DOM node and options
+          new QRCode(qrEl, { text: paymentUrl, width: 256, height: 256 });
+          statusEl.textContent = 'QR code generated — scan with your Solana wallet.';
+        } else {
+          qrEl.innerHTML = `<div style="padding:12px;font-size:14px;background:#fff;color:#000;border-radius:8px;"><label style="font-weight:600;display:block;margin-bottom:8px">Payment URL</label><input readonly value="${paymentUrl}" style="width:100%;padding:8px;font-family:monospace;"/></div>`;
+          statusEl.textContent = 'QR generator not available — copy the payment URL.';
         }
 
-        // Set up deep link
-        deepLink.href = paymentUrl;
-        deepLink.style.display = 'inline-block';
+  // Set up deep link
+  deepLink.href = paymentUrl;
+  deepLink.style.display = 'inline-block';
 
         // Start client-side polling to detect & validate the payment
         startPolling();
@@ -160,21 +148,17 @@
 
       // Use server-side verification instead of browser polling
       try {
-        const response = await fetch(`http://localhost:8787/verify?reference=${currentReference.toString()}&amount=${amount.toString()}`);
-        const result = await response.json();
-
-        if (result.ok) {
-          statusEl.textContent = `✅ Payment verified! Transaction: ${result.signature}`;
-        } else {
-          statusEl.textContent = `❌ Payment verification failed: ${result.error}`;
-        }
+    const response = await fetch(`http://localhost:8787/verify?reference=${currentReference.toString()}&amount=${amount.toString()}`).catch(()=>null);
+    const result = response ? await response.json().catch(()=>null) : null;
+    if (result && result.ok) statusEl.textContent = `✅ Payment verified — ${result.signature}`;
+    else statusEl.textContent = 'Waiting for payment confirmation...';
       } catch (error) {
         console.error('Server verification failed:', error);
         statusEl.textContent = '⚠️ Server verification unavailable, but payment URL is ready';
       }
     }
 
-    // ------- USD to SOL Converter using Pyth -------
+  // ------- USD to SOL Converter using Pyth/Jupiter -------
     let currentSolPrice = null;
     let priceUpdateInterval = null;
 
@@ -199,30 +183,18 @@
 
     // --------------- Fetch from Pyth (Hermes) ---------------
     // Use the global pythHermes from the UMD script
-    const hermes = new window.pythHermes.RestClient(HERMES_URL);
+  const hermes = (window.pythHermes && window.pythHermes.RestClient) ? new window.pythHermes.RestClient(HERMES_URL) : null;
 
     // Pyth returns price + exponent; normalize to float with confidence
     async function fetchSolUsdFromPyth() {
       if (!SOL_USD_FEED_ID) throw new Error('Missing SOL_USD_FEED_ID');
-
-      const resp = await hermes.getLatestPriceUpdates({
-        ids: [SOL_USD_FEED_ID],
-        // Choose a chain if you need a specific one; off-chain verified prices are fine for UI conversion
-        // parsed: true  // returned by default; client parses exponent for you
-      });
-
-      const p = resp.parsed[0]; // first (and only) feed
-      // p.price.price & p.price.expo; p.price.conf & expo — the client also exposes p.price.price as a decimal via parsed
-      // Normalize using bigint + exponent if needed; client parses it for you as number:
-      const price = Number(p.price.price);        // e.g., 182.34 (USD per SOL)
-      const conf  = Number(p.price.confidence);   // 95% conf interval (USD)
+      if (!hermes) throw new Error('Pyth Hermes client not loaded');
+      const resp = await hermes.getLatestPriceUpdates({ ids: [SOL_USD_FEED_ID] });
+      const p = resp.parsed[0];
+      const price = Number(p.price.price);
+      const conf  = Number(p.price.confidence);
       const ts    = new Date(p.price.publishTime * 1000).toISOString();
-
-      lastPrice = price;
-      lastConf  = conf;
-      lastTs    = ts;
-
-      console.log('Pyth price updated:', { price, conf, ts });
+      lastPrice = price; lastConf = conf; lastTs = ts;
     }
 
     // --------------- Fallback (Jupiter quote in USDC→SOL) ---------------
@@ -230,15 +202,9 @@
     async function fetchSolUsdFallback() {
       const res = await fetch('https://price.jup.ag/v4/price?ids=SOL');
       const j = await res.json();
-      const price = j.data?.SOL?.price; // USD per SOL
-      if (price) {
-        lastPrice = Number(price);
-        lastConf = null; // Jupiter doesn't provide confidence intervals
-        lastTs = new Date().toISOString();
-        console.log('Jupiter price updated:', price);
-      } else {
-        throw new Error('Jupiter price unavailable');
-      }
+      const price = j.data?.SOL?.price;
+      if (price) { lastPrice = Number(price); lastConf = null; lastTs = new Date().toISOString(); }
+      else throw new Error('Jupiter price unavailable');
     }
 
     // --------------- Convert USD → SOL ---------------

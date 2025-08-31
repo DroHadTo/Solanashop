@@ -1,23 +1,12 @@
 // Silk & Bows — UI interactions only (no web3)
 (function(){
-  console.log('Script loaded, checking libraries...');
-
-  // Wait for libraries to load
-  const checkLibraries = () => {
-    if (typeof solanaWeb3 !== 'undefined' && typeof BigNumber !== 'undefined' && typeof SolanaPay !== 'undefined') {
-      console.log('All libraries loaded successfully');
-      initializeApp();
-    } else {
-      console.log('Libraries not ready, retrying...');
-      console.log('solanaWeb3:', typeof solanaWeb3);
-      console.log('BigNumber:', typeof BigNumber);
-      console.log('SolanaPay:', typeof SolanaPay);
-      setTimeout(checkLibraries, 100);
-    }
+  // Lightweight startup: wait for DOM ready then init
+  const whenReady = (fn) => {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
   };
 
   const initializeApp = () => {
-    console.log('Initializing app...');
 
     // ------- CONFIG -------
     const CLUSTER = 'mainnet-beta'; // 'devnet' for testing
@@ -39,50 +28,58 @@
 
     const url = SolanaPay.encodeURL({ recipient: MERCHANT_WALLET, amount, reference, label, message, memo, splToken: USDC_MINT });
 
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
   // Image modal quick-view
-  const imageModal = $('#imageModal');
-  const modalImage = $('#modalImage');
-  const openModal = (src, alt) => {
-    if(!imageModal || !modalImage) return;
-    modalImage.src = src; modalImage.alt = alt || '';
-    imageModal.style.display = 'flex';
-  };
-  const closeModal = () => { if(imageModal){ imageModal.style.display = 'none'; } };
-  if(imageModal){
-    imageModal.addEventListener('click', (e)=>{ if(e.target === imageModal) closeModal(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
-  }
+    const imageModal = $('#imageModal');
+    const modalImage = $('#modalImage');
+    const openModal = (src, alt) => {
+      if(!imageModal || !modalImage) return;
+      modalImage.src = src; modalImage.alt = alt || '';
+      imageModal.style.display = 'flex'; imageModal.setAttribute('aria-hidden','false');
+    };
+    const closeModal = () => { if(imageModal){ imageModal.style.display = 'none'; imageModal.setAttribute('aria-hidden','true'); modalImage.src=''; } };
+    if(imageModal){
+      imageModal.addEventListener('click', (e)=>{ if(e.target === imageModal) closeModal(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+    }
 
   // Image load fade-in
-  $$('.product-image img').forEach(img => {
-    if(img.complete) img.classList.add('loaded');
-    else img.addEventListener('load', ()=> img.classList.add('loaded'));
-  });
+    $$('.product-image img').forEach(img => {
+      if(img.complete) img.classList.add('loaded');
+      else img.addEventListener('load', ()=> img.classList.add('loaded'));
+    });
 
   // Attach quick-view on product cards
-  $$('.product-card').forEach(card => {
-    const img = $('.product-image img', card);
-    const qv = $('.quick-view', card);
-    const open = () => img && openModal(img.src, img.alt);
-    if(img) img.addEventListener('click', open);
-    if(qv) qv.addEventListener('click', open);
-  });
+    // Use event delegation for quick view & image clicks
+    document.addEventListener('click', (e) => {
+      const qv = e.target.closest('.quick-view');
+      if (qv) {
+        const card = qv.closest('.product-card');
+        const img = card && card.querySelector('.product-image img');
+        if (img) openModal(img.src, img.alt);
+      }
+      const imgClick = e.target.closest('.product-image img');
+      if (imgClick) {
+        const card = imgClick.closest('.product-card');
+        if (card) openModal(imgClick.src, imgClick.alt);
+      }
+    });
 
   // Thumbnail swapping for products with .product-thumbs
-  $$('.product-card').forEach(card => {
-    const mainImg = $('.product-image img', card);
-    const thumbs = $$('.product-thumbs img', card);
-    if(mainImg && thumbs.length){
-      thumbs.forEach(t => t.addEventListener('click', ()=>{
+    // Thumbnail click swapping (delegated)
+    document.addEventListener('click', (e)=>{
+      const thumb = e.target.closest('.product-thumbs img');
+      if (!thumb) return;
+      const card = thumb.closest('.product-card');
+      const mainImg = card && card.querySelector('.product-image img');
+      if (mainImg) {
         const tmp = mainImg.src;
-        mainImg.src = t.src;
-        t.src = tmp; // simple swap for visual feedback
-      }));
-    }
-  });
+        mainImg.src = thumb.src;
+        thumb.src = tmp;
+      }
+    });
 
   // Filters
   const productGrid = $('#productGrid');
@@ -96,36 +93,40 @@
   };
 
   // Search
-  const searchInput = $('#searchInput');
-  const searchBtn = $('#searchBtn');
-  const runSearch = () => {
-    const q = (searchInput?.value || '').trim().toLowerCase();
-    if(!productGrid) return;
-    $$('.product-card', productGrid).forEach(card => {
-      const name = (card.getAttribute('data-name') || '').toLowerCase();
-      card.style.display = name.includes(q) ? '' : 'none';
-    });
-  };
-  if(searchBtn) searchBtn.addEventListener('click', runSearch);
-  if(searchInput) searchInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); }});
+    const searchInput = $('#searchInput');
+    const searchBtn = $('#searchBtn');
+    // debounce helper
+    const debounce = (fn, wait=200) => { let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), wait); }; };
+    const runSearch = () => {
+      const q = (searchInput?.value || '').trim().toLowerCase();
+      if(!productGrid) return;
+      $$('.product-card', productGrid).forEach(card => {
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        card.style.display = name.includes(q) ? '' : 'none';
+      });
+    };
+    if(searchBtn) searchBtn.addEventListener('click', runSearch);
+    if(searchInput) searchInput.addEventListener('input', debounce(runSearch, 180));
 
   // Add to bag (client-side demo toast)
-  const toast = document.createElement('div');
-  toast.setAttribute('role','status');
-  toast.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#141418;border:1px solid rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease;z-index:50;pointer-events:none';
-  document.body.appendChild(toast);
-  const showToast = (msg) => {
-    toast.textContent = msg; toast.style.opacity = '1';
-    clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.style.opacity = '0', 1400);
-  };
+    const toast = document.createElement('div');
+    toast.setAttribute('role','status');
+    toast.className = 'site-toast';
+    toast.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#141418;border:1px solid rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease;z-index:50;pointer-events:none';
+    document.body.appendChild(toast);
+    const showToast = (msg) => {
+      toast.textContent = msg; toast.style.opacity = '1';
+      clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.style.opacity = '0', 1400);
+    };
 
   // Click on product to simulate add-to-bag via toast when no add button present
-  $$('.product-card').forEach(card => {
-    card.addEventListener('dblclick', ()=>{
-      const name = card?.getAttribute('data-name') || 'Item';
+    // double-click to add to bag (accessible fallback)
+    document.addEventListener('dblclick', (e)=>{
+      const card = e.target.closest('.product-card');
+      if (!card) return;
+      const name = card.getAttribute('data-name') || 'Item';
       showToast(`${name} added to bag`);
     });
-  });
 
   // --- Simple Cart Implementation ---
   const cart = [];
@@ -175,7 +176,7 @@
     const productCards = $$('.product-card');
     console.log('Found product cards:', productCards.length);
 
-    productCards.forEach((card, index) => {
+  productCards.forEach((card, index) => {
       console.log(`Processing card ${index}:`, card.getAttribute('data-name'));
       const btn = document.createElement('button');
       btn.className = 'add-to-cart';
@@ -193,19 +194,17 @@
         alert(`Added ${name} to cart for ${price} USDC!`);
         addToCart(name, price);
       });
-      const imgWrap = $('.product-image', card) || card;
-      imgWrap.style.position = imgWrap.style.position || 'relative';
-      imgWrap.appendChild(btn);
+        const imgWrap = $('.product-image', card) || card;
+        if (imgWrap) {
+          imgWrap.style.position = imgWrap.style.position || 'relative';
+          imgWrap.appendChild(btn);
+        }
       console.log(`Added cart button to: ${name}`);
     });
   };
 
   // Wait for DOM to be ready, then inject buttons
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectCartButtons);
-  } else {
-    injectCartButtons();
-  }
+  whenReady(injectCartButtons);
 
   // On submit, show payment QR and wait for payment
   if(checkoutForm && orderField){
@@ -230,38 +229,16 @@
       const startPolling = async () => {
         if (pollAbort) pollAbort.aborted = true;
         pollAbort = new AbortController();
-
         while (!pollAbort.aborted) {
           try {
-            // 1) Find a transaction that includes our unique reference
             const { signature } = await SolanaPay.findReference(connection, orderReference, { finality: 'confirmed' });
-
-            // 2) Validate the transfer details (recipient, amount, token) from that signature
-            await SolanaPay.validateTransfer(
-              connection,
-              signature,
-              {
-                recipient: MERCHANT_WALLET,
-                amount: totalAmount,
-                splToken: USDC_MINT,
-                reference: orderReference,
-              },
-              { commitment: 'confirmed' }
-            );
-
-            console.log('Payment confirmed!');
-            // Update UI
+            await SolanaPay.validateTransfer(connection, signature, { recipient: MERCHANT_WALLET, amount: totalAmount, splToken: USDC_MINT, reference: orderReference }, { commitment: 'confirmed' });
             document.getElementById('paymentTitle').textContent = 'Payment Successful!';
             document.getElementById('paymentText').textContent = 'Your payment has been confirmed. Processing your order...';
             document.getElementById('qrCodeContainer').innerHTML = '';
-            // Wait a bit then submit
-            setTimeout(() => {
-              orderField.value = JSON.stringify(cart, null, 2);
-              checkoutForm.submit();
-            }, 2000);
+            setTimeout(() => { orderField.value = JSON.stringify(cart, null, 2); checkoutForm.submit(); }, 1000);
             break;
           } catch (e) {
-            // No match yet — back off a bit and retry
             await new Promise(r => setTimeout(r, 1200));
           }
         }
@@ -271,19 +248,17 @@
   }
 
   // Step 4: Encode the Link into a QR Code and Display It
-  window.addEventListener('DOMContentLoaded', () => {
-    if (typeof SolanaPay !== 'undefined' && typeof SolanaPay.createQR === 'function' && typeof url !== 'undefined') {
-      const qrCode = SolanaPay.createQR(url, 256, '#000'); // size, color
-      const element = document.getElementById('qr-code-container');
-      if (element && qrCode) {
-        element.appendChild(qrCode);
+    whenReady(()=>{
+      if (typeof SolanaPay !== 'undefined' && typeof SolanaPay.createQR === 'function' && typeof url !== 'undefined') {
+        const qrCode = SolanaPay.createQR(url, 256, '#000');
+        const element = document.getElementById('qr-code-container');
+        if (element && qrCode) element.appendChild(qrCode);
       }
-    }
-  });
+    });
   };
 
-  // Start checking for libraries
-  checkLibraries();
+  // Start app when DOM is ready (external libs are loaded with defer)
+  whenReady(initializeApp);
 })();
 // if ($usd) $usd.addEventListener('input', renderUsdToSol);
 // refreshPrice();

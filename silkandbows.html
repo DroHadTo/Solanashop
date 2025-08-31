@@ -7,13 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pathway+Extreme:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet">
-    <!-- Web3.js (global `solanaWeb3`) per Solana docs -->
-    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <!-- BigNumber.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js"></script>
-    <!-- Solana Pay -->
-    <script src="https://unpkg.com/@solana/pay@0.2.6/dist/index.js"></script>
+    <!-- Load font non-blocking for faster first paint -->
+    <link href="https://fonts.googleapis.com/css2?family=Pathway+Extreme:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 </head>
 <body>
     <nav class="navbar">
@@ -677,6 +672,10 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.2/bignumber.min.js" defer></script>
+    <script src="https://unpkg.com/@solana/pay@0.2.6/dist/index.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
