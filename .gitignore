@@ -70,5 +70,4 @@ dist/
 build/
 
 # Server files (if any)
-server.js
-server.mjs
+# server.js
